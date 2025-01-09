@@ -105,12 +105,30 @@ app.put("/teachers/:id", async (req, res) => {
   try {
     const updatedTeacher = await Teacher.findByIdAndUpdate(teacherId, updatedTeacherData, { new: true })
     if(!updatedTeacher) {
-      res.status(404).json({ error: "Teacher not found"})
+      res.status(404).json({ error: "Teacher not found" })
     }
     res.status(200).json(updatedTeacher)
   } catch (error) {
     console.error(error)
-    res.status(500).json({ error: "Internal server error"})
+    res.status(500).json({ error: "Internal server error" })
+  }
+})
+
+app.delete("/teachers/:id", async (req, res) => {
+  const teacherId = req.params.id
+
+  try {
+    const deletedTeacher = await Teacher.findByIdAndDelete(teacherId)
+    if(!deletedTeacher) {
+      res.status(404).json({ error: "Teacher not found" })
+    }
+    res.status(200).json({
+      message: "Teacher deleted successfully",
+      teacher: deletedTeacher
+    })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: "Internal server error" })
   }
 })
 
