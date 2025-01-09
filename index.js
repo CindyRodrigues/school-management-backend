@@ -48,12 +48,12 @@ app.put("/students/:id", async (req, res) => {
       { new: true },
     );
     if (!updatedStudent) {
-      return res.status(404).json({ message: "Student not found" });
+      return res.status(404).json({ error: "Student not found" });
     }
     res.status(200).json(updatedStudent);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
@@ -95,6 +95,22 @@ app.post("/teachers", async (req, res) => {
     res.status(201).json(teacher)
   } catch (error) {
     res.status(500).json({ error: "Internal server error" })
+  }
+})
+
+app.put("/teachers/:id", async (req, res) => {
+  const teacherId = req.params.id
+  const updatedTeacherData = req.body
+
+  try {
+    const updatedTeacher = await Teacher.findByIdAndUpdate(teacherId, updatedTeacherData, { new: true })
+    if(!updatedTeacher) {
+      res.status(404).json({ error: "Teacher not found"})
+    }
+    res.status(200).json(updatedTeacher)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: "Internal server error"})
   }
 })
 
