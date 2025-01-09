@@ -5,6 +5,7 @@ const app = express();
 
 const { initializeDatabase } = require("./db/db.connection");
 const { Student } = require("./models/students.model");
+const { Teacher } = require("./models/teachers.model");
 
 app.use(cors());
 app.use(express.json());
@@ -32,7 +33,7 @@ app.post("/students", async (req, res) => {
     await student.save();
     res.status(201).json(student);
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
@@ -46,11 +47,9 @@ app.put("/students/:id", async (req, res) => {
       updatedStudentData,
       { new: true },
     );
-
     if (!updatedStudent) {
       return res.status(404).json({ message: "Student not found" });
     }
-
     res.status(200).json(updatedStudent);
   } catch (error) {
     console.error(error);
@@ -63,11 +62,9 @@ app.delete("/students/:id", async (req, res) => {
 
   try {
     const deletedStudent = await Student.findByIdAndDelete(studentId);
-
     if (!deletedStudent) {
       return res.status(404).json({ error: "Student not found" });
     }
-
     res
       .status(200)
       .json({
@@ -79,6 +76,27 @@ app.delete("/students/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+app.get("/teachers", async (req, res) => {
+  try {
+    const teachers = await Teacher.find()
+    res.json(teachers)
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" })
+  }
+})
+
+app.post("/teachers", async (req, res) => {
+  const { name, email, phoneNumber, gender } = req.body
+
+  try {
+    const teacher = new Teacher({ name, email, phoneNumber, gender })
+    await teacher.save()
+    res.status(201).json(teacher)
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" })
+  }
+})
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
